@@ -286,3 +286,65 @@ void randomizedSetFree(RandomizedSet* obj) {
     free(obj);
 }
 
+
+int* productExceptSelf(int* nums, int numsSize, int* returnSize) {
+    int left[numsSize], right[numsSize];
+    int *answer = (int*)malloc(sizeof(int) * numsSize);
+    left[0] = 1;
+    right[numsSize-1] = 1;
+    *returnSize = numsSize;
+    for(int i = 1; i < numsSize; i++){
+        left[i] = nums[i-1] * left[i-1];
+    }
+    for(int j = numsSize-2; j >= 0 ; j--){
+        right[j] = nums[j+1] * right[j+1];
+    }
+    for(int i = 0; i < numsSize; i++){
+        answer[i] = left[i] * right[i];
+    }
+    return answer;
+}
+
+int canCompleteCircuit(int* gas, int gasSize, int* cost, int costSize) {
+    int cnt = 0 , gassum = 0, costsum = 0;
+    for(int i = 0; i < gasSize;i = i + 1 + cnt){
+        cnt = 0;
+        costsum = 0;
+        gassum = 0;
+        while(cnt < gasSize){
+            int j = (i + cnt) % gasSize;
+            costsum+=cost[j];
+            gassum+=gas[j];
+            if(gassum < costsum)
+                break;
+            cnt++;
+        }
+        if(cnt == gasSize)
+            return i;
+    }
+    return -1;
+}
+
+int candy(int* ratings, int ratingsSize) {
+    int leftright[ratingsSize];
+    leftright[0] = 1;
+    for(int i = 1; i < ratingsSize; i++){
+        if(ratings[i]>ratings[i-1]){
+            leftright[i] = leftright[i-1]+1;
+        }
+        else{
+            leftright[i] = 1;
+        }
+    }
+   
+    leftright[ratingsSize-1] = 1 > leftright[ratingsSize-1] ? 1 : leftright[ratingsSize-1];
+    int sum = leftright[ratingsSize-1];
+    for(int i = ratingsSize-2; i >=0; i--){
+        if(ratings[i]>ratings[i+1])
+            leftright[i] = leftright[i+1]+1 > leftright[i] ? leftright[i+1]+1 : leftright[i];
+        else
+            leftright[i] = 1 > leftright[i] ? 1 : leftright[i];
+        sum += leftright[i];
+    }
+    return sum;
+}

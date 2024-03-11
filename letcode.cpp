@@ -348,3 +348,84 @@ int candy(int* ratings, int ratingsSize) {
     }
     return sum;
 }
+
+int trap(int* height, int heightSize) {
+    int rain[heightSize];
+    int max = height[0];
+    for(int i = 0; i < heightSize; i++){
+        if(height[i] > max)
+            max = height[i];
+        rain[i] = max - height[i];
+    }
+    int sum = 0;
+    max = height[heightSize-1];
+    for(int i = heightSize-1; i >= 0; i--){
+        if(height[i] > max)
+            max = height[i];
+        rain[i] = max - height[i] < rain[i] ? max - height[i] : rain[i];
+        sum += rain[i];
+    }
+    return sum;
+}
+
+int getvalue(char c){
+    switch(c){
+        case 'I': return 1;
+        case 'V': return 5;
+        case 'X': return 10;
+        case 'L': return 50;
+        case 'C': return 100;
+        case 'D': return 500;
+        case 'M': return 1000;
+    }
+    return 0;
+}
+int romanToInt(char* s) {
+    int pre;
+    int sum = 0;
+    pre = getvalue(s[0]);
+    for(int i = 1; i < strlen(s); i++){
+        int num = getvalue(s[i]);
+        if(pre < num)
+            sum -= pre;
+        else
+            sum += pre;
+        pre = num;
+    }
+    sum += pre;
+    return sum;
+}
+
+int lengthOfLastWord(char* s) {
+    if(strlen(s) == 0)
+        return 0;
+    int i = 0, count = 0;
+    for(i = strlen(s)-1; i >= 0; i--){
+        if(count == 0 && s[i] == ' ')
+            continue;
+        if(count != 0 && s[i] == ' ')
+            break;
+        count++;
+    }
+    return count;
+}
+
+char* longestCommonPrefix(char** strs, int strsSize) {
+    char * str = (char*)malloc(sizeof(char) * 200);
+    strcpy(str, strs[0]);
+
+    if(strsSize == 0)
+        return "";
+
+    int length1 = strlen(strs[0]);
+    for(int i = 0; i < length1; i++){
+        char c = strs[0][i];
+        for(int j = 1; j < strsSize; j++){
+            if(i == strlen(strs[j]) || strs[j][i] != c){
+                str[i] = '\0';
+                return str;
+            }
+        }
+    }
+    return str;
+}

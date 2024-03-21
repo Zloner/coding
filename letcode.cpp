@@ -429,3 +429,298 @@ char* longestCommonPrefix(char** strs, int strsSize) {
     }
     return str;
 }
+
+char* reverseWords(char* s) {
+    char tmp[10001];
+    int k = 0;
+    for(int i = strlen(s)-1; i > 0; i--){
+        if(s[i] != ' ' && s[i-1] == ' '){
+            tmp[k++] = s[i];
+            tmp[k++] = ' ';
+        }
+        else if(s[i] == ' ')
+            continue;
+        else if(s[i] != ' '){
+            tmp[k++] = s[i];
+        }
+    }
+
+    if(s[0] != ' ')
+        tmp[k++] = s[0];
+    tmp[k++] = '\0';
+    printf("%s\n", tmp);
+    
+
+    int left = 0, right = 0;
+    for(int i = 0; i < k; i++){
+        if(tmp[i] != ' ' && tmp[i] != '\0'){
+            right++;
+        }
+        else{
+            int j, m = 0;
+            for(j = right-1, m = left; j >= left; j--, m++){
+                s[m] = tmp[j];
+            }
+            s[m++] = '\0';
+            left = m;
+            right = m;
+        }
+        if(tmp[i] == ' ')
+            s[i] = ' ';
+    }
+    if(s[strlen(s)-1] == ' ')
+        s[strlen(s)-1] = '\0';
+
+    printf("%s\n", s);
+    return s;
+}
+
+char* convert(char* s, int numRows) {
+    if(numRows == 1 || numRows >= strlen(s)){
+        return s;
+    }
+    int t = 2*numRows-2;
+    int col = ((strlen(s)+t-1)/t) * (numRows-2+1);
+    char ** arr = (char**)malloc(sizeof(char*) * numRows);
+    for(int i = 0; i < numRows; i++){
+        arr[i] = (char*)malloc(sizeof(char) * col);
+        memset(arr[i], 0, sizeof(char)*col);
+    }
+    
+    int x = 0, y = 0;
+    for(int i = 0; i < strlen(s); i++){
+        if(i%t < numRows - 1){
+            arr[x][y] = s[i];
+            x++;
+        }
+        else{
+            arr[x][y] = s[i];
+            x--; y++;
+        }
+    }
+
+    int k = 0;
+    for(int i = 0; i < numRows; i++){
+        for(int j = 0; j < col; j++){
+            if(arr[i][j]){
+                s[k] = arr[i][j];
+                k++;
+            }
+        }
+    }
+    return s;
+}
+
+char* convert(char* s, int numRows) {
+    if(numRows == 1 || numRows > strlen(s))
+        return s;
+    char *ans = (char*)malloc(sizeof(char)*1001);
+    int t = 2*numRows - 2;
+    int col = (strlen(s)+t-1)/t * (numRows-1);
+    int k = 0;
+    for(int i = 0; i < numRows; i++){
+        for(int j = 0; i + j < strlen(s); j+=t){
+            ans[k++] = s[i+j];
+            if(i > 0 && i < numRows - 1 && j + t - i < strlen(s)){
+                ans[k++] = s[j + t - i];
+            }
+        }
+    }
+    ans[k] = '\0';
+    return ans;
+}
+
+int strStr(char* haystack, char* needle) {
+    char * ans = strstr(haystack, needle);
+    if(ans == NULL){
+        return -1;
+    }
+    else{
+        return ans-haystack;
+    }
+}
+
+bool isSubsequence(char* s, char* t) {
+    int i = 0, j = 0;
+    while(j < strlen(t)){
+        if(t[j] == s[i]){
+            i++;
+        }
+        j++;
+    }
+    if(i == strlen(s))
+        return true;
+    else
+        return false;
+}
+
+int* twoSum(int* numbers, int numbersSize, int target, int* returnSize) {
+    int * ret = (int*)malloc(sizeof(int)*2);
+    *returnSize = 2;
+
+    int left = 0, right = numbersSize-1;
+    while(left < right){
+        int sum = numbers[left] + numbers[right];
+        if(sum == target){
+            ret[0] = left+1;
+            ret[1] = right+1;
+            return ret;
+        }
+        else if(sum < target){
+            left++;
+        }
+        else{
+            right--;
+        }
+    }
+    ret[0] = -1;
+    ret[1] = -1;
+    return ret;
+}
+
+int* twoSum(int* numbers, int numbersSize, int target, int* returnSize) {
+    int * ret = (int*)malloc(sizeof(int)*2);
+    *returnSize = 2;
+
+    for(int i = 0; i < numbersSize; i++){
+        int left = i+1, right = numbersSize-1;
+        while(left <= right){
+            int mid = (left + right)/2;
+            if(numbers[mid] == target - numbers[i]){
+                ret[0] = i+1;
+                ret[1] = mid+1;
+                return ret;
+            }
+            else if(numbers[i] + numbers[mid] < target){
+                left = mid+1;
+            }
+            else{
+                right = mid-1;
+            }
+        }
+    }
+    return ret;
+}
+
+int maxArea(int* height, int heightSize) {
+    int left = 0, right = heightSize-1;
+    int vol = (right - left) * fmin(height[left], height[right]);
+    
+    while(left < right){
+        if(height[left] < height[right])
+            left++;
+        else
+            right--;
+        int tmp = (right - left) * fmin(height[left], height[right]);
+        vol = fmax(vol, tmp);
+    }
+    return vol;
+}
+
+class Solution {
+public:
+    vector<vector<int>> threeSum(vector<int>& nums) {
+        int n = nums.size();
+        vector<vector<int>> ans;
+
+        sort(nums.begin(), nums.end());
+        for(int i = 0; i < n; i++){
+            if(i > 0 && nums[i] == nums[i-1])
+                continue;
+            
+            int k = n - 1;
+            int target = -nums[i];
+
+            for(int j = i + 1; j < n; j++){
+                if(j > i + 1 && nums[j] == nums[j-1])
+                    continue;
+                
+                while(j < k && nums[j] + nums[k] > target)
+                    k--;
+                if(j == k)
+                    break;
+                if(nums[j] + nums[k] == target)
+                    ans.push_back({nums[i], nums[j], nums[k]});
+            }
+        }
+        return ans;
+    }
+};
+
+class Solution {
+public:
+    int minSubArrayLen(int target, vector<int>& nums) {
+        int n = nums.size();
+        int len = INT_MAX;
+        for(int i = 0; i < n; i++){
+            int sum = 0;
+            for(int j = i; j < n; j++){
+                sum+=nums[j];
+                if(sum >= target){
+                    len = min(len, j-i+1);
+                    break;
+                }
+            }
+        }
+        return len == INT_MAX ? 0 : len;
+    }
+};
+
+class Solution {
+public:
+    int minSubArrayLen(int target, vector<int>& nums) {
+        int n = nums.size();
+        if(n == 0){
+            return 0;
+        }
+        int len = n+1;
+        int begin = 0, ends = 0;
+        int sum = 0;
+        while(ends < n){
+            sum+=nums[ends];
+            while(sum >= target){
+                len = (ends - begin + 1) < len ? (ends - begin + 1) : len;
+                sum-=nums[begin];
+                begin++;
+            }
+            ends++;
+        }
+
+        return len == n+1 ? 0 : len;
+    }
+};
+
+class Solution {
+public:
+    int lengthOfLongestSubstring(string s) {
+        int left = 0, right = 0;
+        int n = s.size();
+        if(n == 0){
+            return 0;
+        }
+        int len = 1;
+        for(int i = 1; i < n; i++){
+            int flag = -1;
+
+            for(int j = left; j <= right; j++){
+                if(s[j] == s[i]){
+                    flag = j;
+                    break;
+                }
+            }
+
+            if(flag == -1){
+                right++;
+            }
+            else{
+                right++;
+                left = flag + 1;
+            }
+
+            len = len > (right - left + 1) ? len : (right - left + 1);
+        }
+
+        return len;
+    }
+};
+
